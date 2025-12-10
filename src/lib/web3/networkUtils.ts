@@ -1,9 +1,10 @@
 import { ethers } from "ethers";
 
-export const U2U_CHAIN_IDS = [2484, 39]; // Testnet and Mainnet
+// Updated for Story Protocol Aeneid Testnet
+export const STORY_CHAIN_IDS = [1315]; // Aeneid Testnet
 
-export const isU2UNetwork = (chainId: number): boolean => {
-  return U2U_CHAIN_IDS.includes(chainId);
+export const isStoryNetwork = (chainId: number): boolean => {
+  return STORY_CHAIN_IDS.includes(chainId);
 };
 
 export const getNetworkInfo = async (): Promise<{ chainId: number; name: string } | null> => {
@@ -24,7 +25,7 @@ export const getNetworkInfo = async (): Promise<{ chainId: number; name: string 
   }
 };
 
-export const checkAndSwitchToU2U = async (): Promise<boolean> => {
+export const checkAndSwitchToStory = async (): Promise<boolean> => {
   if (typeof window === 'undefined' || !window.ethereum) {
     return false;
   }
@@ -37,51 +38,51 @@ export const checkAndSwitchToU2U = async (): Promise<boolean> => {
 
     console.log('Current network:', networkInfo);
     
-    if (isU2UNetwork(networkInfo.chainId)) {
-      console.log('Already on U2U network');
+    if (isStoryNetwork(networkInfo.chainId)) {
+      console.log('Already on Story Protocol network');
       return true;
     }
 
-    // Try to switch to U2U testnet (2484) first
+    // Try to switch to Story Aeneid Testnet (1315) first
     try {
-      console.log('Attempting to switch to U2U testnet (2484)');
+      console.log('Attempting to switch to Story Aeneid Testnet (1315)');
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x9b4' }], // 2484 in hex
+        params: [{ chainId: '0x523' }], // 1315 in hex
       });
-      console.log('Successfully switched to U2U testnet');
+      console.log('Successfully switched to Story Aeneid Testnet');
       return true;
     } catch (switchError: any) {
-      console.log('Error switching to U2U testnet:', switchError);
+      console.log('Error switching to Story Aeneid Testnet:', switchError);
       
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
         try {
-          console.log('Adding U2U testnet to wallet');
+          console.log('Adding Story Aeneid Testnet to wallet');
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
             params: [
               {
-                chainId: '0x9b4',
-                chainName: 'U2U Nebulas Testnet',
+                chainId: '0x523',
+                chainName: 'Story Aeneid Testnet',
                 nativeCurrency: {
-                  name: 'U2U',
-                  symbol: 'U2U',
+                  name: 'IP',
+                  symbol: 'IP',
                   decimals: 18,
                 },
-                rpcUrls: ['https://rpc-nebulas-testnet.u2u.xyz'],
-                blockExplorerUrls: ['https://testnet.u2uscan.xyz'],
+                rpcUrls: ['https://aeneid.storyrpc.io'],
+                blockExplorerUrls: ['https://aeneid.storyscan.io'],
               },
             ],
           });
-          console.log('Successfully added and switched to U2U testnet');
+          console.log('Successfully added and switched to Story Aeneid Testnet');
           return true;
         } catch (addError) {
-          console.error('Error adding U2U testnet:', addError);
+          console.error('Error adding Story Aeneid Testnet:', addError);
           return false;
         }
       }
-      console.error('Error switching to U2U network:', switchError);
+      console.error('Error switching to Story Protocol network:', switchError);
       return false;
     }
   } catch (error) {
@@ -91,47 +92,47 @@ export const checkAndSwitchToU2U = async (): Promise<boolean> => {
 };
 
 // Manual network switch function that can be called from UI
-export const switchToU2UNetwork = async (): Promise<{ success: boolean; message: string }> => {
+export const switchToStoryNetwork = async (): Promise<{ success: boolean; message: string }> => {
   if (typeof window === 'undefined' || !window.ethereum) {
     return { success: false, message: 'MetaMask is not installed!' };
   }
 
   try {
-    // First, try to switch to U2U Testnet (2484)
+    // First, try to switch to Story Aeneid Testnet (1315)
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x9b4' }], // 2484 in hex
+      params: [{ chainId: '0x523' }], // 1315 in hex
     });
-    return { success: true, message: 'Switched to U2U Testnet' };
+    return { success: true, message: 'Switched to Story Aeneid Testnet' };
   } catch (switchError: any) {
     // This error code indicates that the chain has not been added to MetaMask
     if (switchError.code === 4902) {
       try {
-        // Add U2U Testnet network
+        // Add Story Aeneid Testnet network
         await window.ethereum.request({
           method: 'wallet_addEthereumChain',
           params: [
             {
-              chainId: '0x9b4', // 2484 in hex
-              chainName: 'U2U Nebulas Testnet',
+              chainId: '0x523', // 1315 in hex
+              chainName: 'Story Aeneid Testnet',
               nativeCurrency: {
-                name: 'U2U',
-                symbol: 'U2U',
+                name: 'IP',
+                symbol: 'IP',
                 decimals: 18,
               },
-              rpcUrls: ['https://rpc-nebulas-testnet.u2u.xyz'],
-              blockExplorerUrls: ['https://testnet.u2uscan.xyz'],
+              rpcUrls: ['https://aeneid.storyrpc.io'],
+              blockExplorerUrls: ['https://aeneid.storyscan.io'],
             },
           ],
         });
-        return { success: true, message: 'Added and switched to U2U Testnet' };
+        return { success: true, message: 'Added and switched to Story Aeneid Testnet' };
       } catch (addError) {
-        console.error('Failed to add U2U Testnet network:', addError);
-        return { success: false, message: 'Failed to add U2U Testnet network. Please add it manually in MetaMask.' };
+        console.error('Failed to add Story Aeneid Testnet network:', addError);
+        return { success: false, message: 'Failed to add Story Aeneid Testnet network. Please add it manually in MetaMask.' };
       }
     } else {
-      console.error('Failed to switch to U2U Testnet network:', switchError);
-      return { success: false, message: 'Failed to switch to U2U Testnet network. Please switch manually in MetaMask.' };
+      console.error('Failed to switch to Story Aeneid Testnet network:', switchError);
+      return { success: false, message: 'Failed to switch to Story Aeneid Testnet network. Please switch manually in MetaMask.' };
     }
   }
 };

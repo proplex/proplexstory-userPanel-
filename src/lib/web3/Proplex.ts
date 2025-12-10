@@ -8,14 +8,14 @@ import ProplexOrderManagerABI from './ABIs/ProplexOrderManager.json';
 
 // Contract Addresses (from Addresses.md)
 export const CONTRACT_ADDRESSES = {
-  SPVFactory: '0x19e647c2fDbFaAC1B2d7F5eD141c657C1afCDafa',
-  AssetFactory: '0xF2edEE4CFE26a0d7f808826D0351bcaaed555aE1',
-  Registry: '0xB6E65EDA9537A205aA9c6dc09D78Cbe7b1ec8328',
+  SPVFactory: '0xb9694089d485f5Af75cAee1F4447b629f097FF82',
+  AssetFactory: '0x60c977735cfBF44Cf5B33bD02a8B637765E7AbbB',
+  Registry: '0x7d5299e611990b6d25F48d3954bEB07B1f4E6dE0',
   // Mock compliance contracts (for testnet)
-  MockIdentityRegistry: '0x962185B4912bFb91bA9c4b26CE905E484Fa216c1',
-  MockModularCompliance: '0xad7C8C502DbbFCD74c2F68f002822048Af8985F9',
-  MockClaimIssuerRegistry: '0x047E36d57b021e92ceb6d3b87aFEa480c5D9A388',
-  MockClaimRegistry: '0x37F9Df8f735c1F44dAbc8B86f57b840Ba189b54A',
+  MockIdentityRegistry: '0xD49CdDA22d425eCFff516a71D0C020b16e2Be58C',
+  MockModularCompliance: '0x3CBE61c36356361772AcFb2BF482758c58E61d24',
+  MockClaimIssuerRegistry: '0xe66ae37Bc0982825b5F8b37821b42d3B2d04D085',
+  MockClaimRegistry: '0xa6401adAd919ea6Ec9929716a19DDFf62bc3Bc1C',
 } as const;
 
 // Types

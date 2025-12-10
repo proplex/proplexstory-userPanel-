@@ -9,7 +9,7 @@ import { useWeb3 } from "@/contexts/Web3Context";
 import { createOrder, getTokenBalance, getTokenAllowance } from "@/lib/web3/Proplex";
 import { CONTRACT_ADDRESSES } from "@/lib/web3/Proplex";
 // Import network utilities
-import { isU2UNetwork, getNetworkInfo } from "@/lib/web3/networkUtils";
+import { isStoryNetwork, getNetworkInfo } from "@/lib/web3/networkUtils";
 // Import blockchain configuration
 import { BLOCKCHAIN_CONFIG } from "@/config/blockchain";
 
@@ -79,10 +79,10 @@ const usePlaceOrderApi = () => {
 
       console.log("Network from provider:", networkInfo);
 
-      // Check if we're on the correct U2U network (testnet or mainnet)
-      if (!isU2UNetwork(networkInfo.chainId)) {
+      // Check if we're on the correct Story Protocol network
+      if (!isStoryNetwork(networkInfo.chainId)) {
         const errorMsg =
-          "Please switch to U2U Network (either Testnet or Mainnet).";
+          "Please switch to Story Protocol Network (Aeneid Testnet).";
         toast.error(errorMsg);
         throw new Error(errorMsg);
       }

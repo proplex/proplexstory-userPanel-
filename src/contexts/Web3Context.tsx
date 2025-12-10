@@ -4,46 +4,27 @@ import { useToast } from '@/components/ui/use-toast';
 import { ethers } from 'ethers';
 import api from '@/lib/api';
 // Import network utilities
-import { checkAndSwitchToU2U, getNetworkInfo, isU2UNetwork, switchToU2UNetwork } from '@/lib/web3/networkUtils';
+import { checkAndSwitchToStory, getNetworkInfo, isStoryNetwork, switchToStoryNetwork } from '@/lib/web3/networkUtils';
 
 type WalletConnector = 'metaMask';
 
-// Define U2U testnet chain
-const u2uTestnet = {
-  id: 2484,
-  name: 'U2U Nebulas Testnet',
+// Define Story Protocol Aeneid Testnet chain
+const storyTestnet = {
+  id: 1315,
+  name: 'Story Aeneid Testnet',
   nativeCurrency: {
     decimals: 18,
-    name: 'U2U',
-    symbol: 'U2U',
+    name: 'IP',
+    symbol: 'IP',
   },
   rpcUrls: {
-    default: { http: ['https://rpc-nebulas-testnet.u2u.xyz'] },
-    public: { http: ['https://rpc-nebulas-testnet.u2u.xyz'] },
+    default: { http: ['https://aeneid.storyrpc.io'] },
+    public: { http: ['https://aeneid.storyrpc.io'] },
   },
   blockExplorers: {
-    default: { name: 'U2U Explorer', url: 'https://testnet.u2uscan.xyz' },
+    default: { name: 'StoryScan', url: 'https://aeneid.storyscan.io' },
   },
   testnet: true,
-} as const;
-
-// Define U2U mainnet chain
-const u2uMainnet = {
-  id: 39,
-  name: 'U2U Mainnet',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'U2U',
-    symbol: 'U2U',
-  },
-  rpcUrls: {
-    default: { http: ['https://rpc-mainnet.u2u.xyz'] },
-    public: { http: ['https://rpc-mainnet.u2u.xyz'] },
-  },
-  blockExplorers: {
-    default: { name: 'U2U Explorer', url: 'https://u2uscan.xyz' },
-  },
-  testnet: false,
 } as const;
 
 type Web3ContextType = {
@@ -60,21 +41,16 @@ type Web3ContextType = {
   defaultWalletAddress: string | null;
   setWalletAsDefault: (address: string) => Promise<boolean>;
   checkDefaultWallet: (address: string) => Promise<boolean>;
-  switchToU2UNetwork: () => Promise<{ success: boolean; message: string }>; // Add manual switch function
+  switchToStoryNetwork: () => Promise<{ success: boolean; message: string }>; // Add manual switch function
 };
 
 const Web3Context = createContext<Web3ContextType | undefined>(undefined);
 
 export const SUPPORTED_CHAINS = [
   {
-    id: u2uTestnet.id,
-    name: 'U2U Nebulas Testnet',
+    id: storyTestnet.id,
+    name: 'Story Aeneid Testnet',
     isTestnet: true,
-  },
-  {
-    id: u2uMainnet.id,
-    name: 'U2U Mainnet',
-    isTestnet: false,
   },
 ];
 
@@ -106,7 +82,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
   });
   
   const { disconnect } = useDisconnect();
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
 
   // Set client-side flag and handle wallet connection state
@@ -133,7 +109,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
         console.log('Wallet connected:', { address });
         
         // Use provider to get accurate network information
-        let actualChainId: number | undefined = undefined;
+        let actualChainId: number | undefined = chainId;
         let networkInfo = null;
         if (typeof window !== 'undefined' && window.ethereum) {
           try {
@@ -142,16 +118,16 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
               actualChainId = networkInfo.chainId;
               console.log('Actual network from provider:', networkInfo);
               
-              // Check if we're on the correct U2U network
-              if (!isU2UNetwork(actualChainId)) {
+              // Check if we're on the correct Story Protocol network
+              if (!isStoryNetwork(actualChainId)) {
                 // Show a toast message indicating we're switching networks
                 toast({
                   title: 'Network Switch Required',
-                  description: 'Switching to U2U Network...',
+                  description: 'Switching to Story Protocol Network...',
                 });
                 
-                // Try to switch to U2U network automatically
-                const switched = await checkAndSwitchToU2U();
+                // Try to switch to Story network automatically
+                const switched = await checkAndSwitchToStory();
                 if (switched) {
                   // Wait a bit for the network to switch
                   await new Promise(resolve => setTimeout(resolve, 1000));
@@ -165,7 +141,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
                     // Show success message
                     toast({
                       title: 'Network Switched',
-                      description: 'Successfully switched to U2U Network',
+                      description: 'Successfully switched to Story Protocol Network',
                     });
                   }
                 } else {
@@ -214,7 +190,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
     };
     
     handleConnection();
-  }, [isConnected, address, toast]);
+  }, [isConnected, address, chainId, toast]);
 
   // Handle connection status changes and errors
   useEffect(() => {
@@ -342,8 +318,8 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
   }, [toast]);
 
   // Manual network switch function
-  const manualSwitchToU2UNetwork = useCallback(async () => {
-    const result = await switchToU2UNetwork();
+  const manualSwitchToStoryNetwork = useCallback(async () => {
+    const result = await switchToStoryNetwork();
     if (result.success) {
       toast({
         title: 'Success',
@@ -369,7 +345,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
       value={{
         isConnected,
         address,
-        chainId: undefined, // We're getting chainId from provider instead
+        chainId,
         provider,
         connectWallet,
         disconnectWallet,
@@ -380,7 +356,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
         checkDefaultWallet,
         connectionError,
         setConnectionError,
-        switchToU2UNetwork: manualSwitchToU2UNetwork, // Expose manual switch function
+        switchToStoryNetwork: manualSwitchToStoryNetwork, // Expose manual switch function
       }}
     >
       {children}
