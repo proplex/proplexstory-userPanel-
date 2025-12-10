@@ -1,0 +1,22 @@
+{
+    "name": "Ownmali ~ Fractional Investment Platform",
+    "short_name": "Ownmali",
+    "description": "Ownmali is a fractional investment platform that allows you to invest in startups and projects with as little as $100.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "icons": [
+      {
+        "src": "/favicon.png",
+        "sizes": "192x192",
+        "type": "image/svg"
+      },
+      {
+        "src": "/favicon.png",
+        "sizes": "512x512",
+        "type": "image/svg"
+      }
+    ]
+  }
+  
